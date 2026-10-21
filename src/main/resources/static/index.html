@@ -1,0 +1,943 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Historical Timeline</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+    :root {
+        --bg: #f6f3ec;
+        --ink: #22251f;
+        --muted: #77796f;
+        --line: #dedbd1;
+        --green: #315d4a;
+        --gold: #d9a441;
+        --card: #fffdf8;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: 'DM Sans', sans-serif;
+    }
+
+    header {
+        padding: 32px max(22px, calc((100vw - 1120px) / 2));
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 18px;
+    }
+
+    .brand {
+        font-weight: 700;
+        letter-spacing: .08em;
+        font-size: 13px;
+    }
+
+    .brand span {
+        color: var(--green);
+    }
+
+    .tag {
+        font-size: 12px;
+        color: var(--muted);
+        border: 1px solid var(--line);
+        padding: 8px 12px;
+        border-radius: 30px;
+    }
+
+    main {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 54px 22px 80px;
+    }
+
+    .eyebrow {
+        color: var(--green);
+        font-size: 12px;
+        letter-spacing: .16em;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    h1 {
+        font: 700 clamp(42px, 7vw, 76px) / 1.02 'Playfair Display', serif;
+        letter-spacing: -.04em;
+        max-width: 760px;
+        margin: 18px 0;
+    }
+
+    h1 em {
+        color: var(--green);
+        font-weight: 600;
+    }
+
+    .intro {
+        font-size: 17px;
+        line-height: 1.7;
+        color: var(--muted);
+        max-width: 620px;
+    }
+
+    .search-wrap {
+        margin: 34px 0 18px;
+        display: flex;
+        gap: 10px;
+        max-width: 720px;
+    }
+
+    .search-wrap input {
+        flex: 1;
+        min-width: 0;
+        border: 1px solid var(--line);
+        background: var(--card);
+        border-radius: 12px;
+        padding: 16px 18px;
+        font: inherit;
+        outline-color: var(--green);
+    }
+
+    button {
+        border: 0;
+        border-radius: 12px;
+        background: var(--green);
+        color: white;
+        font: 600 14px 'DM Sans';
+        padding: 0 20px;
+        cursor: pointer;
+    }
+
+    button:disabled {
+        opacity: .4;
+        cursor: not-allowed;
+    }
+
+    .hint {
+        font-size: 12px;
+        color: var(--muted);
+    }
+
+    .layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 300px;
+        gap: 24px;
+        margin-top: 32px;
+    }
+
+    .section-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+    }
+
+    .section-head h2 {
+        font: 600 23px 'Playfair Display';
+        margin: 0;
+    }
+
+    .count {
+        font-size: 12px;
+        color: var(--muted);
+    }
+
+    #results {
+        display: grid;
+        gap: 10px;
+    }
+
+    .result {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 12px;
+    }
+
+    .avatar {
+        width: 58px;
+        height: 58px;
+        object-fit: cover;
+        border-radius: 9px;
+        background: #e7e1d4;
+        flex-shrink: 0;
+    }
+
+    .result-info {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .result-title {
+        font-weight: 700;
+    }
+
+    .desc {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 5px;
+        line-height: 1.45;
+    }
+
+    .add {
+        height: 38px;
+        padding: 0 13px;
+        white-space: nowrap;
+    }
+
+    .panel {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 20px;
+        height: fit-content;
+    }
+
+    .panel h3 {
+        font: 600 21px 'Playfair Display';
+        margin: 0 0 7px;
+    }
+
+    .panel p {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.5;
+        margin: 0 0 18px;
+    }
+
+    .selected {
+        display: grid;
+        gap: 9px;
+    }
+
+    .selected-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 9px;
+    }
+
+    .selected-item .avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .selected-item .result-title {
+        font-size: 13px;
+    }
+
+    .remove {
+        background: transparent;
+        color: var(--muted);
+        padding: 8px;
+        margin-left: auto;
+        font-size: 18px;
+    }
+
+    .compare {
+        width: 100%;
+        padding: 14px;
+        margin-top: 16px;
+    }
+
+    .empty {
+        padding: 30px;
+        text-align: center;
+        color: var(--muted);
+        border: 1px dashed var(--line);
+        border-radius: 12px;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .timeline-section {
+        margin-top: 46px;
+    }
+
+    .timeline-section h2 {
+        font: 600 28px 'Playfair Display';
+        margin: 0 0 8px;
+    }
+
+    .timeline-section > p {
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+    .chart {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 22px;
+        margin-top: 18px;
+        overflow: hidden;
+    }
+
+    .axis {
+        display: flex;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 11px;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 10px;
+        margin-left: 150px;
+    }
+
+
+    .lane {
+        display: grid;
+        grid-template-columns: 140px minmax(0, 1fr) 130px;
+        gap: 10px;
+        align-items: center;
+        margin: 20px 0;
+    }
+
+    .lane-name {
+        font-size: 13px;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    .track {
+        height: 34px;
+        min-width: 0;
+        position: relative;
+        background: linear-gradient(
+            to right,
+            transparent 24.8%, #e9e5dc 25%, transparent 25.2%,
+            transparent 49.8%, #e9e5dc 50%, transparent 50.2%,
+            transparent 74.8%, #e9e5dc 75%, transparent 75.2%
+        );
+    }
+
+    .bar {
+        position: absolute;
+        top: 5px;
+        height: 24px;
+        min-width: 5px;
+        border-radius: 7px;
+        background: var(--green);
+    }
+
+    .bar::after {
+        content: none;
+    }
+
+    .lane-dates {
+        font-size: 11px;
+        color: var(--muted);
+        white-space: nowrap;
+    }
+
+    @media (max-width: 760px) {
+        .lane {
+            grid-template-columns: 90px minmax(0, 1fr);
+            gap: 8px;
+        }
+
+        .lane-dates {
+            grid-column: 2;
+            font-size: 10px;
+            white-space: normal;
+        }
+    }
+
+    .legend {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 22px;
+        line-height: 1.6;
+    }
+
+    .status {
+        min-height: 20px;
+        font-size: 13px;
+        color: var(--green);
+        margin-top: 10px;
+    }
+
+    .foot {
+        margin-top: 42px;
+        padding-top: 20px;
+        border-top: 1px solid var(--line);
+        font-size: 12px;
+        color: var(--muted);
+    }
+
+    a {
+        color: var(--green);
+    }
+
+    @media (max-width: 760px) {
+        header {
+            padding: 22px;
+        }
+
+        .tag {
+            display: none;
+        }
+
+        main {
+            padding-top: 38px;
+        }
+
+        .layout {
+            grid-template-columns: 1fr;
+        }
+
+        .panel {
+            order: -1;
+        }
+
+        .search-wrap {
+            flex-wrap: wrap;
+        }
+
+        .search-wrap button {
+            height: 50px;
+        }
+
+        .axis {
+            margin-left: 100px;
+        }
+
+        .lane {
+            grid-template-columns: 90px minmax(0, 1fr);
+        }
+
+        .bar:after {
+            font-size: 9px;
+        }
+
+        .chart {
+            padding: 14px;
+        }
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="brand">
+    ✳ <span>HISTORY</span> / IN PERSPECTIVE
+  </div>
+  <div class="tag">A little perspective through time</div>
+</header>
+
+<main>
+  <div class="eyebrow">A tool for the curious</div>
+
+  <h1>
+    History is closer<br>
+    than you <em>think.</em>
+  </h1>
+
+  <p class="intro">
+    Pick the people who fascinate you. See when their lives overlapped,
+    who came first, and just how far apart they really were.
+  </p>
+
+  <div class="search-wrap">
+    <input
+      id="query"
+      placeholder="Try Cleopatra, Ada Lovelace, Einstein..."
+      aria-label="Search historical figures"
+    >
+    <button id="searchBtn">Find figures ↗️</button>
+  </div>
+
+  <div class="hint">
+    Search Wikipedia · Compare up to 5 people · No account needed
+  </div>
+
+  <div id="status" class="status" role="status"></div>
+
+  <div class="layout">
+    <section>
+      <div class="section-head">
+        <h2>Discover people</h2>
+        <span id="resultCount" class="count"></span>
+      </div>
+
+      <div id="results">
+        <div class="empty">
+          Search for a person to begin your timeline.<br>
+          Try “Cleopatra” or “Leonardo da Vinci”.
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <h3>Your timeline</h3>
+
+      <p>
+        Choose up to five figures. We'll line up their lifetimes below.
+      </p>
+
+      <div id="selected" class="selected">
+        <div class="empty">
+          Your chosen figures will appear here.
+        </div>
+      </div>
+
+      <button id="compareBtn" class="compare" disabled>
+        Compare lifetimes →
+      </button>
+    </aside>
+  </div>
+
+  <section class="timeline-section" id="timelineSection" hidden>
+    <h2>Different lives. One timeline.</h2>
+
+    <p id="timelineSummary"></p>
+
+    <div id="chart" class="chart"></div>
+
+    <div class="legend">
+      Each bar represents a lifetime. Dates and historical details
+      come from Wikipedia and Wikidata; some ancient dates are estimates.
+      <span id="sources"></span>
+    </div>
+  </section>
+
+  <div class="foot">
+    Made for curiosity. Data from
+    <a href="https://www.wikipedia.org/" target="_blank" rel="noreferrer">
+      Wikipedia
+    </a>
+    and
+    <a href="https://www.wikidata.org/" target="_blank" rel="noreferrer">
+      Wikidata
+    </a>.
+  </div>
+</main>
+
+<script>
+  const $ = s => document.querySelector(s);
+
+  let selected = [];
+  let results = [];
+
+  const esc = s =>
+      String(s ?? '').replace(/[&<>"']/g, c => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+      }[c]));
+
+  function year(y) {
+      if (y == null) return 'data desconhecida';
+      return y < 0
+          ? `${Math.abs(y)} a.C.`
+          : `${y} d.C.`;
+  }
+
+  function shortYear(y) {
+      if (y == null) return '?';
+      return y < 0
+          ? `${Math.abs(y)} a.C.`
+          : `${y}`;
+  }
+
+  function personCard(p) {
+      return `
+          <div class="result">
+              <img
+                  class="avatar"
+                  src="${esc(p.imageUrl || '')}"
+                  onerror="this.style.visibility='hidden'"
+                  alt=""
+              >
+
+              <div class="result-info">
+                  <div class="result-title">${esc(p.title)}</div>
+
+                  <div class="desc">
+                      ${esc(
+                          p.description ||
+                          p.extract ||
+                          'Sem descrição disponível.'
+                      )}
+                  </div>
+              </div>
+
+              <button
+                  class="add"
+                  data-add="${esc(p.title)}"
+                  ${
+                      selected.some(x => x.title === p.title) ||
+                      selected.length >= 5
+                          ? 'disabled'
+                          : ''
+                  }
+              >
+                  ${
+                      selected.some(x => x.title === p.title)
+                          ? 'Added ✓'
+                          : '+ Add'
+                  }
+              </button>
+          </div>
+      `;
+  }
+
+  function renderResults() {
+      $('#results').innerHTML = results.length
+          ? results.map(personCard).join('')
+          : '<div class="empty">No results found. Try another name.</div>';
+
+      $('#resultCount').textContent = results.length
+          ? `${results.length} results`
+          : '';
+  }
+
+  function renderSelected() {
+      $('#selected').innerHTML = selected.length
+          ? selected.map(p => `
+              <div class="selected-item">
+                  <img
+                      class="avatar"
+                      src="${esc(p.imageUrl || '')}"
+                      onerror="this.style.visibility='hidden'"
+                      alt=""
+                  >
+
+                  <div class="result-info">
+                      <div class="result-title">${esc(p.title)}</div>
+
+                      <div class="desc">
+                          ${
+                              p.birthYear != null
+                                  ? year(p.birthYear)
+                                  : 'Dates load when comparing'
+                          }
+                      </div>
+                  </div>
+
+                  <button
+                      class="remove"
+                      data-remove="${esc(p.title)}"
+                      aria-label="Remove ${esc(p.title)}"
+                  >
+                      ×
+                  </button>
+              </div>
+          `).join('')
+          : '<div class="empty">Your chosen figures will appear here.</div>';
+
+      $('#compareBtn').disabled = selected.length === 0;
+
+      renderResults();
+  }
+
+  async function search() {
+      const q = $('#query').value.trim();
+
+      if (!q) return;
+
+      $('#status').textContent = 'Searching Wikipedia…';
+      $('#searchBtn').disabled = true;
+
+      try {
+          const r = await fetch(
+              '/api/people/search?q=' + encodeURIComponent(q)
+          );
+
+          if (!r.ok) throw Error();
+
+          results = await r.json();
+
+          renderResults();
+
+          $('#status').textContent = '';
+      } catch (e) {
+          $('#status').textContent =
+              'Could not reach Wikipedia right now. Please try again.';
+      } finally {
+          $('#searchBtn').disabled = false;
+      }
+  }
+
+  $('#searchBtn').addEventListener('click', search);
+
+  $('#query').addEventListener('keydown', e => {
+      if (e.key === 'Enter') search();
+  });
+
+  $('#results').addEventListener('click', e => {
+      const b = e.target.closest('[data-add]');
+
+      if (
+          !b ||
+          selected.length >= 5 ||
+          selected.some(p => p.title === b.dataset.add)
+      ) {
+          return;
+      }
+
+      const p = results.find(p => p.title === b.dataset.add);
+
+      if (p) {
+          selected.push(p);
+          renderSelected();
+      }
+  });
+
+  $('#selected').addEventListener('click', e => {
+      const b = e.target.closest('[data-remove]');
+
+      if (!b) return;
+
+      selected = selected.filter(
+          p => p.title !== b.dataset.remove
+      );
+
+      renderSelected();
+  });
+
+  $('#compareBtn').addEventListener('click', async () => {
+      if (!selected.length) return;
+
+      $('#compareBtn').disabled = true;
+      $('#status').textContent = 'Gathering dates from Wikidata…';
+
+      try {
+          const r = await fetch('/api/timeline', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                  titles: selected.map(p => p.title)
+              })
+          });
+
+          const data = await r.json();
+
+          if (!r.ok) {
+              throw Error(data.error || 'Request failed');
+          }
+
+          selected = data.people;
+
+          renderSelected();
+          drawTimeline(data);
+
+          $('#status').textContent =
+              'Timeline ready. Explore the overlaps!';
+      } catch (e) {
+          $('#status').textContent =
+              e.message || 'Could not build timeline.';
+      } finally {
+          $('#compareBtn').disabled = selected.length === 0;
+      }
+  });
+
+
+function drawTimeline(data) {
+    const people = data.people;
+    const currentYear = new Date().getFullYear();
+
+    // Use the current year as the endpoint for people without a death year.
+    const datedYears = people.flatMap(person => [
+        person.birthYear,
+        person.deathYear ?? (
+            person.birthYear != null ? currentYear : null
+        )
+    ]).filter(Number.isFinite);
+
+    const timelineSection = document.querySelector('#timelineSection');
+    const chart = document.querySelector('#chart');
+    const summary = document.querySelector('#timelineSummary');
+
+    if (datedYears.length === 0) {
+        timelineSection.hidden = false;
+        summary.textContent = '';
+
+        chart.innerHTML = `
+            <div class="empty">
+                No historical dates are available for these figures.
+                Try searching for different people.
+            </div>
+        `;
+
+        return;
+    }
+
+    let minYear = Math.min(...datedYears);
+    let maxYear = Math.max(...datedYears);
+
+    if (minYear === maxYear) {
+        minYear -= 10;
+        maxYear += 10;
+    }
+
+    const padding = (maxYear - minYear) * 0.04;
+
+    minYear -= padding;
+    maxYear += padding;
+
+    const yearRange = maxYear - minYear;
+
+    function formatYear(year) {
+        if (year == null) {
+            return 'Unknown date';
+        }
+
+        return year < 0
+            ? `${Math.abs(year)} BC`
+            : `${year} AD`;
+    }
+
+    function formatShortYear(year) {
+        if (year == null) {
+            return '?';
+        }
+
+        return year < 0
+            ? `${Math.abs(year)} BC`
+            : `${year}`;
+    }
+
+    // Generate the horizontal timeline axis.
+    let axis = '';
+
+    for (let i = 0; i <= 4; i++) {
+        const year = Math.round(
+            minYear + (yearRange * i) / 4
+        );
+
+        axis += `<span>${formatShortYear(year)}</span>`;
+    }
+
+    // Generate one timeline lane for each historical figure.
+    const lanes = people.map(person => {
+        if (person.birthYear == null) {
+            return `
+                <div class="lane">
+                    <div class="lane-name">
+                        ${esc(person.title)}
+                    </div>
+
+                    <div class="track">
+                        <span class="desc">
+                            Birth date unknown
+                        </span>
+                    </div>
+
+                    <div class="lane-dates">
+                        Unknown dates
+                    </div>
+                </div>
+            `;
+        }
+
+        // A missing death year does not necessarily mean the person is alive.
+        const deathYearUnknown = person.deathYear == null;
+        const endYear = person.deathYear ?? currentYear;
+
+        const left = Math.max(
+            0,
+            ((person.birthYear - minYear) / yearRange) * 100
+        );
+
+        const width = Math.max(
+            0.7,
+            ((endYear - person.birthYear) / yearRange) * 100
+        );
+
+        const label = deathYearUnknown
+            ? `${formatShortYear(person.birthYear)} – Present`
+            : `${formatShortYear(person.birthYear)} – ${formatShortYear(person.deathYear)}`;
+
+        const statusLabel = deathYearUnknown
+            ? `
+                <span class="living-badge">
+                    - Alive/death not confirmed
+                </span>
+            `
+            : '';
+
+        return `
+            <div class="lane">
+                <div class="lane-name">
+                    ${esc(person.title)}
+                    ${statusLabel}
+                </div>
+
+                <div class="track">
+                    <div
+                        class="bar ${deathYearUnknown ? 'bar-living' : ''}"
+                        style="
+                            left: ${left}%;
+                            width: ${Math.max(
+                                0,
+                                Math.min(width, 100 - left)
+                            )}%;
+                        "
+                        title="${esc(person.title)}: ${esc(label)}"
+                    ></div>
+                </div>
+
+                <div class="lane-dates">
+                    ${esc(label)}
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    timelineSection.hidden = false;
+
+    summary.textContent =
+        `From ${formatYear(Math.round(minYear))} to ` +
+        `${formatYear(Math.round(maxYear))}. ` +
+        `Undated lifetimes extend to ${currentYear}.`;
+
+    chart.innerHTML = `
+        <div class="axis">${axis}</div>
+        ${lanes}
+    `;
+
+    // Render Wikipedia source links.
+    document.querySelector('#sources').innerHTML = people
+        .map(person => `
+            <a
+                href="${esc(person.wikipediaUrl)}"
+                target="_blank"
+                rel="noreferrer"
+            >${esc(person.title)}</a>
+        `)
+        .join(' · ');
+}
+
+
+  searchInitial();
+
+  async function searchInitial() {
+      $('#query').value = 'Cleopatra';
+      await search();
+  }
+</script>
+</body>
+</html>
